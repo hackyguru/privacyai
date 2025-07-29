@@ -65,7 +65,7 @@ export class AIService {
       this.logger.info(`🦙 Querying Ollama with model: ${this.defaultModel}`);
       
       // Add context about the decentralized nature of the system
-      const systemPrompt = `You are an AI assistant running on a decentralized network using the Waku protocol. This conversation is happening through peer-to-peer messaging, ensuring privacy and censorship resistance. Be helpful, informative, and acknowledge the decentralized nature of this interaction when relevant. Keep responses concise but informative.`;
+      const systemPrompt = `Your name is Waku AI, an AI assistant running on a privacy preserving decentralised network`;
       
       const response = await this.ollama.chat({
         model: this.defaultModel,
