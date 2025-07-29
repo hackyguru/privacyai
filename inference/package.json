@@ -1,0 +1,29 @@
+{
+  "name": "privacyai-inference",
+  "version": "1.0.0",
+  "description": "Waku-based AI inference service for PrivacyAI",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "test": "node test-service.js"
+  },
+  "dependencies": {
+    "@waku/sdk": "^0.0.33",
+    "dotenv": "^16.4.5",
+    "ollama": "^0.5.16"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0"
+  },
+  "keywords": [
+    "waku",
+    "decentralized",
+    "ai",
+    "inference",
+    "web3"
+  ],
+  "author": "PrivacyAI",
+  "license": "MIT"
+}
