@@ -3,7 +3,6 @@ import { useChat } from '../hooks/useChat';
 import { ChatSidebar } from '../components/ChatSidebar';
 import { ChatInterface } from '../components/ChatInterface';
 import { WakuStatus } from '../components/WakuStatus';
-import { WakuTestPanel } from '../components/WakuTestPanel';
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
@@ -16,8 +15,8 @@ export default function Home() {
     selectSession,
     deleteSession,
     sendMessage,
-    testWakuResponse,
-    sendWakuResponse,
+
+
     wakuConnected,
     wakuConnecting,
     wakuError,
@@ -87,7 +86,6 @@ export default function Home() {
           isConnected={wakuConnected}
           isConnecting={wakuConnecting}
           error={wakuError}
-          onTestMessage={testWakuResponse}
         />
         
         {/* Chat Interface */}
@@ -98,13 +96,6 @@ export default function Home() {
           isLoading={isLoading}
         />
       </div>
-
-      {/* Waku Test Panel */}
-      <WakuTestPanel
-        currentSessionId={currentSession?.id || null}
-        isConnected={wakuConnected}
-        onSendResponse={sendWakuResponse}
-      />
     </div>
   );
 }

@@ -54,7 +54,7 @@ npm run dev
 The client will be available at `http://localhost:3001` with:
 - 💬 ChatGPT-style interface
 - 📊 Real-time Waku status indicator
-- 🧪 Testing tools for manual responses
+- 🤖 Real AI responses via Ollama integration
 - 💾 Session persistence via localStorage
 
 ### 3. Chat with Decentralized AI
@@ -70,8 +70,8 @@ The client will be available at `http://localhost:3001` with:
 - ✅ **ChatGPT-style UI** with dark/light themes
 - ✅ **Session Management** - Create, switch, delete conversations
 - ✅ **Real-time Status** - Visual Waku connection indicators
-- ✅ **Topic Display** - Shows active request/response topics
-- ✅ **Test Panel** - Simulate AI responses for development
+- ✅ **Topic Display** - Shows active request/response topics  
+- ✅ **Ollama Integration** - Real AI responses via local models
 - ✅ **localStorage Persistence** - Conversations saved locally
 - ✅ **Responsive Design** - Works on desktop and mobile
 
@@ -169,7 +169,7 @@ npm run dev  # Auto-reload with --watch flag
 3. **Check Waku status** - Should show green "Connected"
 4. **Send a test message** - "Hello, how does Waku work?"
 5. **Watch console logs** - See message flow in real-time
-6. **Use test panel** - Manual AI response simulation
+6. **Receive AI response** - Real Ollama-powered responses via Waku
 
 ### Debugging
 

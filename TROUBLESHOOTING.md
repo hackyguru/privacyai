@@ -182,9 +182,9 @@ If using strict firewall, may need to allow:
 
 For development on restricted networks:
 
-1. **Use Demo Mode**: Already configured and working
-2. **Simulate Both Sides**: Use the test panel to simulate AI responses
-3. **Mock Network**: Test UI/UX without real P2P networking
+1. **Check Ollama**: Ensure Ollama service is running locally
+2. **Verify Models**: Confirm AI models are available (`ollama list`)
+3. **Test Connectivity**: Check Waku network connection status
 
 ### Production Deployment
 
@@ -200,8 +200,7 @@ While in demo mode, you can still test:
 
 ✅ **Chat Interface**: Full ChatGPT-style UI  
 ✅ **Session Management**: Create/switch/delete conversations  
-✅ **AI Responses**: Simulated intelligent responses  
-✅ **Test Panel**: Manual response simulation  
+✅ **AI Responses**: Real Ollama-powered responses via Waku  
 ✅ **localStorage**: Conversation persistence  
 ✅ **Responsive Design**: Mobile/desktop compatibility  
 
@@ -243,10 +242,10 @@ curl -s http://localhost:3001 || echo "Client not running"
 
 ## Success Indicators
 
-### Demo Mode Working ✅
-- 🔵 Blue dot: "Demo Mode (Waku Simulated)"
-- Chat interface responds with simulated AI
-- Test panel allows manual responses
+### Ollama Integration Working ✅
+- 🤖 Real AI responses from local Ollama models
+- Chat interface receives intelligent responses
+- Inference service logs show Ollama processing
 
 ### Full Waku Working ✅
 - 🟢 Green dot: "Connected to Waku Network"  

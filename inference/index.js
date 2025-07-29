@@ -161,6 +161,19 @@ class WakuInferenceService {
         return;
       }
 
+      // Check peer count before sending
+      const peers = this.node.libp2p.getPeers();
+      this.logger.info(`📊 Available peers: ${peers.length}`);
+      
+      if (peers.length === 0) {
+        this.logger.warn('⚠️ No peers available, waiting for peer discovery...');
+        // Wait a bit for peer discovery
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        const newPeers = this.node.libp2p.getPeers();
+        this.logger.info(`📊 Peers after wait: ${newPeers.length}`);
+      }
+
       this.logger.info(`📤 Sending response:`, {
         sessionId: responseMessage.sessionId,
         messageId: responseMessage.messageId,
@@ -173,13 +186,52 @@ class WakuInferenceService {
       // Encode the response
       const payload = new TextEncoder().encode(JSON.stringify(responseMessage));
       
-      // Send via Waku
-      const result = await this.node.lightPush.send(encoder, { payload });
+      // Retry logic for sending
+      let attempts = 0;
+      const maxAttempts = 3;
+      let lastError = null;
       
-      if (result.successes.length > 0) {
-        this.logger.success(`✅ Response sent to ${result.successes.length} peers`);
-      } else {
-        this.logger.error('❌ Failed to send response to any peers');
+      while (attempts < maxAttempts) {
+        try {
+          attempts++;
+          this.logger.info(`📡 Send attempt ${attempts}/${maxAttempts}`);
+          
+          // Send via Waku
+          const result = await this.node.lightPush.send(encoder, { payload });
+          
+          if (result.successes.length > 0) {
+            this.logger.success(`✅ Response sent to ${result.successes.length} peers`);
+            return; // Success, exit
+          } else {
+            const errorMsg = `❌ Failed to send response to any peers (attempt ${attempts})`;
+            this.logger.error(errorMsg);
+            
+            if (result.failures && result.failures.length > 0) {
+              this.logger.error('Failure details:', result.failures);
+            }
+            
+            lastError = new Error(errorMsg);
+            
+            // Wait before retry (except on last attempt)
+            if (attempts < maxAttempts) {
+              await new Promise(resolve => setTimeout(resolve, 1000 * attempts));
+            }
+          }
+        } catch (sendError) {
+          this.logger.error(`💥 Send attempt ${attempts} failed:`, sendError);
+          lastError = sendError;
+          
+          // Wait before retry (except on last attempt)
+          if (attempts < maxAttempts) {
+            await new Promise(resolve => setTimeout(resolve, 1000 * attempts));
+          }
+        }
+      }
+      
+      // All attempts failed
+      this.logger.error(`🔴 Failed to send response after ${maxAttempts} attempts`);
+      if (lastError) {
+        this.logger.error('Last error:', lastError.message);
       }
 
     } catch (error) {

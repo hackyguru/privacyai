@@ -8,8 +8,8 @@ export class AIService {
     this.ollama = new Ollama({
       host: process.env.OLLAMA_HOST || 'http://localhost:11434'
     });
-    this.defaultModel = process.env.OLLAMA_MODEL || 'dolphin-llama3:latest';
-    this.useOllama = process.env.USE_OLLAMA !== 'true'; // Defaults to true, set to false to use fallback
+    this.defaultModel = process.env.OLLAMA_MODEL || 'deepseek-r1:8b';
+    this.useOllama = process.env.USE_OLLAMA !== 'false'; // Defaults to true, set to false to use fallback
     
     // Keep fallback responses for when Ollama is unavailable
     this.fallbackResponses = {

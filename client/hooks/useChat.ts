@@ -203,63 +203,7 @@ export const useChat = () => {
   const currentSession = chatState.sessions.find(session => session.id === chatState.currentSessionId);
   const currentMessages = chatState.currentSessionId ? chatState.messages[chatState.currentSessionId] || [] : [];
 
-  // Test function to simulate Waku response
-  const testWakuResponse = useCallback(() => {
-    if (!chatState.currentSessionId) return;
 
-    const sessionId = chatState.currentSessionId;
-    const testMessage: WakuMessage = {
-      sessionId,
-      messageId: Date.now().toString(),
-      content: "This is a test response from the Waku network! The decentralized messaging is working correctly.",
-      timestamp: new Date().toISOString(),
-      type: 'response',
-    };
-
-    // Simulate the response callback
-    const assistantMessage: ChatMessage = {
-      id: testMessage.messageId,
-      sessionId: testMessage.sessionId,
-      content: testMessage.content,
-      role: 'assistant',
-      timestamp: testMessage.timestamp,
-    };
-
-    setChatState(prevState => {
-      const currentSessionMessages = prevState.messages[sessionId] || [];
-      return {
-        ...prevState,
-        messages: {
-          ...prevState.messages,
-          [sessionId]: [...currentSessionMessages, assistantMessage],
-        },
-      };
-    });
-  }, [chatState.currentSessionId, setChatState]);
-
-  // Function to send custom Waku response (for testing)
-  const sendWakuResponse = useCallback((wakuMessage: WakuMessage) => {
-    console.log('📥 Manual Waku response sent:', wakuMessage);
-    
-    const assistantMessage: ChatMessage = {
-      id: wakuMessage.messageId,
-      sessionId: wakuMessage.sessionId,
-      content: wakuMessage.content,
-      role: 'assistant',
-      timestamp: wakuMessage.timestamp,
-    };
-
-    setChatState(prevState => {
-      const currentSessionMessages = prevState.messages[wakuMessage.sessionId] || [];
-      return {
-        ...prevState,
-        messages: {
-          ...prevState.messages,
-          [wakuMessage.sessionId]: [...currentSessionMessages, assistantMessage],
-        },
-      };
-    });
-  }, [setChatState]);
 
   return {
     sessions: chatState.sessions,
@@ -270,8 +214,6 @@ export const useChat = () => {
     selectSession,
     deleteSession,
     sendMessage,
-    testWakuResponse,
-    sendWakuResponse,
     // Waku status
     wakuConnected: isConnected,
     wakuConnecting: isConnecting,

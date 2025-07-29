@@ -6,14 +6,7 @@ const WAKU_CONFIG: WakuConfig = {
   responseTopic: '/privacyai/1/chat-response/proto',
 };
 
-// Simulated AI responses for demo
-const AI_RESPONSES = [
-  "I'm processing your request through the Waku decentralized network...",
-  "This message was received via Waku protocol from the request topic and is being sent back through the response topic.",
-  "Waku enables censorship-resistant communication. Your message has been successfully transmitted!",
-  "The decentralized network is working! This response demonstrates end-to-end Waku messaging.",
-  "Hello! I received your message through Waku's decentralized messaging protocol.",
-];
+
 
 export const useWaku = () => {
   const [node, setNode] = useState<any>(null);
@@ -48,9 +41,9 @@ export const useWaku = () => {
           await wakuNode.start();
           
           console.log('Waiting for remote peers...');
-          // Set a timeout for peer connection
+          // Set a longer timeout for peer connection
           const peerTimeout = new Promise((_, reject) => 
-            setTimeout(() => reject(new Error('Peer connection timeout')), 10000)
+            setTimeout(() => reject(new Error('Peer connection timeout')), 30000)
           );
           
           await Promise.race([
@@ -58,33 +51,27 @@ export const useWaku = () => {
             peerTimeout
           ]);
           
+          // Log peer information
+          const peers = wakuNode.libp2p.getPeers();
+          console.log(`🔗 Connected to ${peers.length} Waku peers`);
+          
           setNode(wakuNode);
           setIsConnected(true);
-          console.log('Waku node connected successfully!');
+          console.log('✅ Waku node connected successfully!');
+          
+          // Additional peer discovery - wait a bit more for peer stability
+          setTimeout(() => {
+            const finalPeers = wakuNode.libp2p.getPeers();
+            console.log(`🔗 Final peer count: ${finalPeers.length}`);
+          }, 5000);
         } catch (error) {
-          console.error('Waku connection failed, falling back to demo mode:', error);
-          setError('Waku connection failed - using demo mode');
-          // Fall through to demo mode
+          console.error('Waku connection failed:', error);
+          setError(`Waku connection failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+          setIsConnected(false);
         }
-      } 
-      
-      if (!ENABLE_FULL_WAKU || error) {
-        console.log('Initializing Waku demo mode...');
-        
-        // Simulate connection delay
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        
-        // Create mock node
-        const mockNode = {
-          id: 'demo-node-' + Date.now(),
-          peers: 3,
-          status: 'connected'
-        };
-        
-        setNode(mockNode);
-        setIsConnected(true);
-        setError(null); // Clear any previous errors
-        console.log('Waku demo mode connected successfully');
+      } else {
+        console.log('ENABLE_FULL_WAKU is disabled - this should not happen');
+        setError('Waku is disabled in configuration');
       }
       
     } catch (err) {
@@ -113,6 +100,15 @@ export const useWaku = () => {
       });
 
       if (ENABLE_FULL_WAKU) {
+        // Check peer count before sending
+        const peers = node.libp2p.getPeers();
+        console.log(`📊 Available peers: ${peers.length}`);
+        
+        if (peers.length === 0) {
+          console.warn('⚠️ No peers available for sending message');
+          return false;
+        }
+        
         // Implement full Waku sending
         const { createEncoder } = await import('@waku/sdk');
         const encoder = createEncoder({ contentTopic });
@@ -121,40 +117,16 @@ export const useWaku = () => {
         
         const success = result.successes.length > 0;
         if (success) {
-          console.log('✅ Message sent successfully via Waku');
+          console.log(`✅ Message sent successfully via Waku to ${result.successes.length} peers`);
         } else {
           console.error('❌ Failed to send message via Waku:', result.failures);
         }
         return success;
-      } else {
-        // Demo mode: Simulate AI response after delay
-        if (message.type === 'request') {
-          setTimeout(() => {
-            const randomResponse = AI_RESPONSES[Math.floor(Math.random() * AI_RESPONSES.length)];
-            
-            const responseMessage: WakuMessage = {
-              sessionId: message.sessionId,
-              messageId: Date.now().toString(),
-              content: randomResponse,
-              timestamp: new Date().toISOString(),
-              type: 'response'
-            };
-
-            console.log(`📥 Received Waku response from ${WAKU_CONFIG.responseTopic}:`, {
-              sessionId: responseMessage.sessionId,
-              messageId: responseMessage.messageId,
-              content: responseMessage.content.substring(0, 50) + '...',
-              type: responseMessage.type
-            });
-
-            if (callbackRef.current) {
-              callbackRef.current(responseMessage);
-            }
-          }, 1500 + Math.random() * 1000); // Random delay 1.5-2.5 seconds
-        }
       }
       
-      return true;
+      // Fallback if ENABLE_FULL_WAKU is false (should not happen in production)
+      console.error('ENABLE_FULL_WAKU is disabled - cannot send messages');
+      return false;
       
     } catch (err) {
       console.error('Failed to send Waku message:', err);

@@ -6,8 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node index.js",
-    "dev": "node --watch index.js",
-    "test": "node test-service.js"
+    "dev": "node --watch index.js"
   },
   "dependencies": {
     "@waku/sdk": "^0.0.33",

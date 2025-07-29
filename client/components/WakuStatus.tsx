@@ -2,10 +2,9 @@ interface WakuStatusProps {
   isConnected: boolean;
   isConnecting: boolean;
   error: string | null;
-  onTestMessage?: () => void;
 }
 
-export const WakuStatus = ({ isConnected, isConnecting, error, onTestMessage }: WakuStatusProps) => {
+export const WakuStatus = ({ isConnected, isConnecting, error }: WakuStatusProps) => {
   const getStatusIcon = () => {
     if (isConnecting) {
       return (
@@ -60,16 +59,6 @@ export const WakuStatus = ({ isConnected, isConnecting, error, onTestMessage }: 
           </div>
         )}
       </div>
-      
-      {isConnected && onTestMessage && (
-        <button
-          onClick={onTestMessage}
-          className="px-2 py-1 text-xs bg-zinc-200 hover:bg-zinc-300 rounded transition-colors"
-          aria-label="Test Waku response"
-        >
-          Test Response
-        </button>
-      )}
     </div>
   );
 }; 
