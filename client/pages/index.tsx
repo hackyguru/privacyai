@@ -34,7 +34,7 @@ export default function Home() {
   // Prevent hydration mismatch by not rendering until mounted
   if (!mounted) {
     return (
-      <div className="h-screen flex bg-zinc-50">
+      <div className="h-screen flex bg-zinc-50 overflow-hidden">
         {/* Sidebar */}
         <div className="w-64 bg-zinc-900 border-r border-zinc-700 flex flex-col h-full">
           <div className="p-4 border-b border-zinc-700">
@@ -69,7 +69,7 @@ export default function Home() {
   }
 
   return (
-    <div className="h-screen flex bg-zinc-50">
+    <div className="h-screen flex bg-zinc-50 overflow-hidden">
       {/* Sidebar */}
       <ChatSidebar
         sessions={sessions}
@@ -80,7 +80,7 @@ export default function Home() {
       />
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col min-h-0">
         {/* Waku Status */}
         <WakuStatus
           isConnected={wakuConnected}

@@ -23,7 +23,7 @@ export const ChatInterface = ({ session, messages, onSendMessage, isLoading }: C
 
   if (!session) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center bg-white">
+      <div className="flex-1 flex flex-col items-center justify-center bg-white min-h-0">
         <div className="text-center">
           <div className="w-16 h-16 bg-zinc-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <svg className="w-8 h-8 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -38,9 +38,9 @@ export const ChatInterface = ({ session, messages, onSendMessage, isLoading }: C
   }
 
   return (
-    <div className="flex-1 flex flex-col bg-white">
+    <div className="flex-1 flex flex-col bg-white min-h-0">
       {/* Chat Header */}
-      <div className="border-b border-zinc-200 bg-white px-4 py-3">
+      <div className="border-b border-zinc-200 bg-white px-4 py-3 flex-shrink-0">
         <h1 className="text-lg font-semibold text-zinc-800 truncate">
           {session.title}
         </h1>
@@ -50,7 +50,7 @@ export const ChatInterface = ({ session, messages, onSendMessage, isLoading }: C
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto min-h-0">
         {messages.length === 0 ? (
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
@@ -88,7 +88,9 @@ export const ChatInterface = ({ session, messages, onSendMessage, isLoading }: C
       </div>
 
       {/* Input */}
-      <ChatInput onSendMessage={onSendMessage} disabled={isLoading} />
+      <div className="flex-shrink-0">
+        <ChatInput onSendMessage={onSendMessage} disabled={isLoading} />
+      </div>
     </div>
   );
 }; 
