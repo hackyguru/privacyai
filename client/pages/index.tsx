@@ -15,8 +15,6 @@ export default function Home() {
     selectSession,
     deleteSession,
     sendMessage,
-
-
     wakuConnected,
     wakuConnecting,
     wakuError,
@@ -34,42 +32,32 @@ export default function Home() {
   // Prevent hydration mismatch by not rendering until mounted
   if (!mounted) {
     return (
-      <div className="h-screen flex bg-zinc-50 overflow-hidden">
-        {/* Sidebar */}
-        <div className="w-64 bg-zinc-900 border-r border-zinc-700 flex flex-col h-full">
-          <div className="p-4 border-b border-zinc-700">
-            <button
-              className="w-full bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg px-4 py-2 text-sm font-medium transition-colors"
-              aria-label="Create new chat"
-            >
-              + New Chat
-            </button>
-          </div>
-          <div className="flex-1 overflow-y-auto">
-            <div className="p-4 text-zinc-400 text-sm text-center">
-              Loading...
+      <div className="h-screen flex bg-black overflow-hidden">
+        {/* Sidebar Loading */}
+        <div className="w-80 bg-black flex flex-col h-full">
+          <div className="p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-green-500 rounded-lg" style={{ background: 'linear-gradient(to bottom right, #9DFF00, #7ACC00)' }}></div>
+              <div className="h-4 bg-zinc-700 rounded w-24 animate-pulse"></div>
             </div>
+            <div className="h-10 bg-zinc-700 rounded-lg animate-pulse"></div>
+          </div>
+          <div className="flex-1 p-4">
+            <div className="text-zinc-500 text-sm text-center">Loading...</div>
           </div>
         </div>
 
-        {/* Main Chat Area */}
-        <div className="flex-1 flex flex-col items-center justify-center bg-white">
-          <div className="text-center">
-            <div className="w-16 h-16 bg-zinc-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-              </svg>
-            </div>
-            <h2 className="text-xl font-semibold text-zinc-700 mb-2">Welcome to ChatGPT Clone</h2>
-            <p className="text-zinc-500">Loading your chats...</p>
-          </div>
+        {/* Main Area Loading */}
+        <div className="flex-1 flex flex-col bg-black p-6">
+          <div className="h-16 bg-zinc-800 rounded-2xl mb-4 animate-pulse"></div>
+          <div className="flex-1 bg-zinc-800 rounded-2xl animate-pulse"></div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="h-screen flex bg-zinc-50 overflow-hidden">
+    <div className="h-screen flex bg-black overflow-hidden">
       {/* Sidebar */}
       <ChatSidebar
         sessions={sessions}
@@ -79,22 +67,46 @@ export default function Home() {
         onDeleteSession={deleteSession}
       />
 
-      {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col min-h-0">
-        {/* Waku Status */}
-        <WakuStatus
-          isConnected={wakuConnected}
-          isConnecting={wakuConnecting}
-          error={wakuError}
-        />
+      {/* Main Chat Area Container */}
+      <div className="flex-1 flex flex-col p-6 min-h-0">
+        {/* Top Header with User Profile */}
+        <div className="border border-zinc-700 rounded-2xl shadow-sm flex items-center justify-between px-6 py-4 mb-4" style={{ backgroundColor: '#2b2c30' }}>
+          {/* Session Info - Left Side */}
+          <div className="flex items-center gap-4">
+            {currentSession ? (
+              <div>
+                <h2 className="text-lg font-semibold text-white">{currentSession.title}</h2>
+                <p className="text-sm text-zinc-400">
+                  Created {new Date(currentSession.createdAt).toLocaleDateString()}
+                </p>
+              </div>
+            ) : (
+              <div>
+                <h2 className="text-lg font-semibold text-white">New Chat</h2>
+                <p className="text-sm text-zinc-400">Start a conversation</p>
+              </div>
+            )}
+          </div>
+          
+          {/* Connection Status - Right Side */}
+          <div className="flex items-center">
+            <WakuStatus
+              isConnected={wakuConnected}
+              isConnecting={wakuConnecting}
+              error={wakuError}
+            />
+          </div>
+        </div>
         
-        {/* Chat Interface */}
-        <ChatInterface
-          session={currentSession}
-          messages={currentMessages}
-          onSendMessage={sendMessage}
-          isLoading={isLoading}
-        />
+        {/* Chat Interface - Curved Inset Area */}
+        <div className="flex-1 border border-zinc-700 rounded-2xl shadow-sm overflow-hidden" style={{ backgroundColor: '#2b2c30' }}>
+          <ChatInterface
+            session={currentSession}
+            messages={currentMessages}
+            onSendMessage={sendMessage}
+            isLoading={isLoading}
+          />
+        </div>
       </div>
     </div>
   );

@@ -1,64 +1,41 @@
 interface WakuStatusProps {
   isConnected: boolean;
   isConnecting: boolean;
-  error: string | null;
+  error?: string | null;
 }
 
 export const WakuStatus = ({ isConnected, isConnecting, error }: WakuStatusProps) => {
-  const getStatusIcon = () => {
-    if (isConnecting) {
-      return (
-        <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
-      );
-    }
-    
-    if (isConnected && !error) {
-      return (
-        <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-      );
-    }
-    
-    if (isConnected && error) {
-      return (
-        <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
-      );
-    }
-    
+  if (error) {
     return (
-      <div className="w-2 h-2 bg-red-400 rounded-full"></div>
+      <div className="flex items-center gap-2 px-3 py-1.5 bg-red-900 border border-red-700 rounded-lg">
+        <div className="w-2 h-2 bg-red-400 rounded-full"></div>
+        <span className="text-xs font-medium text-red-300">Network Error</span>
+      </div>
     );
-  };
+  }
 
-  const getStatusText = () => {
-    if (isConnecting) return 'Connecting to Waku...';
-    if (isConnected && !error) return 'Connected to Waku Network';
-    if (isConnected && error) return 'Demo Mode (Waku Simulated)';
-    if (error) return `Waku: ${error}`;
-    return 'Disconnected from Waku';
-  };
+  if (isConnecting) {
+    return (
+      <div className="flex items-center gap-2 px-3 py-1.5 bg-yellow-900 border border-yellow-700 rounded-lg">
+        <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
+        <span className="text-xs font-medium text-yellow-300">Connecting...</span>
+      </div>
+    );
+  }
 
-  const getStatusColor = () => {
-    if (isConnecting) return 'text-yellow-600';
-    if (isConnected && !error) return 'text-green-600';
-    if (isConnected && error) return 'text-blue-600';
-    return 'text-red-600';
-  };
+  if (isConnected) {
+    return (
+      <div className="flex items-center gap-2 px-3 py-1.5 bg-zinc-800 border border-zinc-600 rounded-lg">
+        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#9DFF00' }}></div>
+        <span className="text-xs font-medium" style={{ color: '#9DFF00' }}>Connected</span>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex items-center justify-between px-3 py-2 bg-zinc-50 border-b border-zinc-200">
-      <div className="flex items-center gap-2">
-        {getStatusIcon()}
-        <span className={`text-xs font-medium ${getStatusColor()}`}>
-          {getStatusText()}
-        </span>
-        {isConnected && (
-          <div className="flex items-center gap-4 text-xs text-zinc-500">
-            <span>📤 Request: /privacyai/1/chat-request/proto</span>
-            <span>📥 Response: /privacyai/1/chat-response/proto</span>
-            {error && <span className="text-blue-600">(Simulated)</span>}
-          </div>
-        )}
-      </div>
+    <div className="flex items-center gap-2 px-3 py-1.5 bg-zinc-800 border border-zinc-600 rounded-lg">
+      <div className="w-2 h-2 bg-zinc-500 rounded-full"></div>
+      <span className="text-xs font-medium text-zinc-400">Disconnected</span>
     </div>
   );
 }; 

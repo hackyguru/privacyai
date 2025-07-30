@@ -1,0 +1,98 @@
+---
+version: "2.0"
+
+services:
+  inference:
+    image: ghcr.io/yourusername/privacyai-inference:latest
+    env:
+      # Waku Configuration
+      - WAKU_REQUEST_TOPIC=/marketplace/v1/providers/akash-provider-1/requests
+      - WAKU_RESPONSE_TOPIC=/marketplace/v1/providers/akash-provider-1/responses
+      
+      # Provider Identity
+      - PROVIDER_ID=akash-provider-1
+      - PROVIDER_NAME=Akash AI Provider
+      
+      # AI Configuration  
+      - AI_PROVIDER=local
+      - OLLAMA_HOST=http://localhost:11434
+      - OLLAMA_MODEL=deepseek-r1:8b
+      - USE_OLLAMA=true
+      
+      # Service Configuration
+      - LOG_LEVEL=info
+      - NODE_ENV=production
+      
+    expose:
+      - port: 8080
+        as: 80
+        to:
+          - global: true
+    
+    # Resource allocation
+    params:
+      storage:
+        data:
+          mount: /app/data
+          readOnly: false
+
+  # Optional: Include Ollama service for local AI
+  ollama:
+    image: ollama/ollama:latest
+    env:
+      - OLLAMA_HOST=0.0.0.0
+    expose:
+      - port: 11434
+        to:
+          - service: inference
+    params:
+      storage:
+        models:
+          mount: /root/.ollama
+          readOnly: false
+
+profiles:
+  compute:
+    inference:
+      resources:
+        cpu:
+          units: 2.0
+        memory:
+          size: 4Gi
+        storage:
+          size: 10Gi
+          
+    ollama:
+      resources:
+        cpu:
+          units: 4.0
+        memory:
+          size: 8Gi
+        storage:
+          size: 50Gi
+
+  placement:
+    akash:
+      attributes:
+        host: akash
+      signedBy:
+        anyOf:
+          - "akash1365yvmc4s7awdyj3n2sav7xfx76adc6dnmlx63"
+      pricing:
+        inference:
+          denom: uakt
+          amount: 1000
+        ollama:
+          denom: uakt
+          amount: 2000
+
+deployment:
+  inference:
+    akash:
+      profile: inference
+      count: 1
+      
+  ollama:
+    akash:  
+      profile: ollama
+      count: 1 
